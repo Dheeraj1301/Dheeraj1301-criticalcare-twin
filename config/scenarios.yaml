@@ -1,0 +1,12 @@
+seed: 42
+interval_minutes: 5
+scenarios:
+  Stable:
+    drift: {heart_rate: 0.05, systolic_bp: 0, diastolic_bp: 0, respiratory_rate: 0.02, spo2: 0, temperature: 0.002}
+  Respiratory deterioration:
+    drift: {heart_rate: 0.7, systolic_bp: -0.2, respiratory_rate: 0.55, spo2: -0.45, temperature: 0.015}
+  Hemodynamic instability:
+    drift: {heart_rate: 0.9, systolic_bp: -1.4, diastolic_bp: -0.8, respiratory_rate: 0.25, spo2: -0.08}
+  Fever/inflammatory stress:
+    drift: {heart_rate: 0.65, systolic_bp: -0.25, respiratory_rate: 0.2, temperature: 0.08, glucose: 1.8}
+

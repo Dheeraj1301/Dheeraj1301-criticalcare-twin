@@ -1,0 +1,26 @@
+{
+  "downloaded_at": "2026-10-03T16:59:29.166523+00:00",
+  "datasets": {
+    "patient": {
+      "handle": "mitishaagarwal/patient",
+      "cache_path": "C:\\Users\\disha\\.cache\\kagglehub\\datasets\\mitishaagarwal\\patient\\versions\\3",
+      "files": [
+        "data\\raw\\patient\\dataset.csv"
+      ]
+    },
+    "disease_symptoms_profile": {
+      "handle": "uom190346a/disease-symptoms-and-patient-profile-dataset",
+      "cache_path": "C:\\Users\\disha\\.cache\\kagglehub\\datasets\\uom190346a\\disease-symptoms-and-patient-profile-dataset\\versions\\2",
+      "files": [
+        "data\\raw\\disease_symptoms_profile\\Disease_symptom_and_patient_profile_dataset.csv"
+      ]
+    },
+    "healthcare_analytics": {
+      "handle": "abbas829/healthcare-patient-analytics-dataset",
+      "cache_path": "C:\\Users\\disha\\.cache\\kagglehub\\datasets\\abbas829\\healthcare-patient-analytics-dataset\\versions\\1",
+      "files": [
+        "data\\raw\\healthcare_analytics\\healthcare_patient_analytics_seaborn.csv"
+      ]
+    }
+  }
+}

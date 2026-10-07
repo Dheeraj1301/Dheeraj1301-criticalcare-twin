@@ -1,0 +1,14 @@
+features:
+  heart_rate: {unit: bpm, source: patient/dataset.csv, observed_or_simulated: OBSERVED_OR_SIMULATED, normalization: patient_baseline_z, expected_range: [20, 250], description: Heart rate}
+  systolic_bp: {unit: mmHg, source: patient/dataset.csv, observed_or_simulated: OBSERVED_OR_SIMULATED, normalization: patient_baseline_z, expected_range: [40, 260], description: Systolic blood pressure}
+  diastolic_bp: {unit: mmHg, source: patient/dataset.csv, observed_or_simulated: OBSERVED_OR_SIMULATED, normalization: patient_baseline_z, expected_range: [20, 180], description: Diastolic blood pressure}
+  respiratory_rate: {unit: breaths/min, source: patient/dataset.csv, observed_or_simulated: OBSERVED_OR_SIMULATED, normalization: patient_baseline_z, expected_range: [4, 80], description: Respiratory rate}
+  spo2: {unit: '%', source: patient/dataset.csv, observed_or_simulated: OBSERVED_OR_SIMULATED, normalization: patient_baseline_z, expected_range: [50, 100], description: Peripheral oxygen saturation}
+  temperature: {unit: degC, source: patient/dataset.csv, observed_or_simulated: OBSERVED_OR_SIMULATED, normalization: patient_baseline_z, expected_range: [30, 43], description: Temperature}
+  glucose: {unit: mg/dL, source: patient/dataset.csv, observed_or_simulated: OBSERVED_OR_SIMULATED, normalization: patient_baseline_z, expected_range: [20, 700], description: Blood glucose}
+  potassium: {unit: mmol/L, source: patient/dataset.csv, observed_or_simulated: OBSERVED_OR_SIMULATED, normalization: patient_baseline_z, expected_range: [1.5, 9], description: Serum potassium}
+  gcs: {unit: points, source: patient/dataset.csv, observed_or_simulated: OBSERVED_OR_SIMULATED, normalization: patient_baseline_z, expected_range: [3, 15], description: Glasgow Coma Scale total proxy}
+  mean_arterial_pressure: {unit: mmHg, source: derived, observed_or_simulated: DERIVED, normalization: patient_baseline_z, expected_range: [30, 180], description: Prototype-derived MAP from systolic and diastolic BP}
+  pulse_pressure: {unit: mmHg, source: derived, observed_or_simulated: DERIVED, normalization: patient_baseline_z, expected_range: [10, 180], description: Prototype-derived pulse pressure}
+  shock_index_proxy: {unit: ratio, source: derived, observed_or_simulated: DERIVED, normalization: none, expected_range: [0.1, 3], description: Prototype HR/SBP ratio; not a validated score in this application}
+

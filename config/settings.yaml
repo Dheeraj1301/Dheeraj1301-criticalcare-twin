@@ -1,0 +1,7 @@
+seed: 42
+database: data/criticalcare_twin.sqlite
+history_window: 8
+forecast_steps: 6
+forecast_interval_minutes: 5
+disclaimer: Research and educational prototype. Not for clinical diagnosis, treatment, or patient management.
+

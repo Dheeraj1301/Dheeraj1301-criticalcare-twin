@@ -1,0 +1,113 @@
+[
+  {
+    "patient_id": "25312",
+    "encounter_id": "66154",
+    "age": 68.0,
+    "gender": "M",
+    "ethnicity": "Caucasian",
+    "static_properties": {
+      "bmi": 22.73,
+      "elective_surgery": 0,
+      "ventilated": 0.0,
+      "intubated": 0.0,
+      "icu_type": "CTICU",
+      "apache_3j_bodysystem": "Sepsis",
+      "demo_label": "PATIENT A \u2014 Stable"
+    },
+    "baseline": {
+      "heart_rate": 113.5,
+      "systolic_bp": 123.0,
+      "diastolic_bp": 65.5,
+      "respiratory_rate": 22.0,
+      "spo2": 87.0,
+      "temperature": 38.55,
+      "glucose": 138.5,
+      "potassium": 3.7,
+      "gcs": 13.0
+    },
+    "provenance": {
+      "heart_rate": "OBSERVED: patient/dataset.csv encounter summary",
+      "systolic_bp": "OBSERVED: patient/dataset.csv encounter summary",
+      "diastolic_bp": "OBSERVED: patient/dataset.csv encounter summary",
+      "respiratory_rate": "OBSERVED: patient/dataset.csv encounter summary",
+      "spo2": "OBSERVED: patient/dataset.csv encounter summary",
+      "temperature": "OBSERVED: patient/dataset.csv encounter summary",
+      "glucose": "OBSERVED: patient/dataset.csv encounter summary",
+      "potassium": "OBSERVED: patient/dataset.csv encounter summary",
+      "gcs": "OBSERVED: patient/dataset.csv encounter summary"
+    }
+  },
+  {
+    "patient_id": "38441",
+    "encounter_id": "102408",
+    "age": null,
+    "gender": "M",
+    "ethnicity": "African American",
+    "static_properties": {
+      "bmi": 26.38686696,
+      "elective_surgery": 0,
+      "icu_type": "Cardiac ICU",
+      "demo_label": "PATIENT B \u2014 Gradual deterioration"
+    },
+    "baseline": {
+      "heart_rate": 42.0,
+      "systolic_bp": 127.0,
+      "diastolic_bp": 65.0,
+      "respiratory_rate": 11.0,
+      "spo2": 99.5,
+      "temperature": 36.5,
+      "glucose": 143.0,
+      "potassium": 3.9,
+      "gcs": 15.0
+    },
+    "provenance": {
+      "heart_rate": "OBSERVED: patient/dataset.csv encounter summary",
+      "systolic_bp": "OBSERVED: patient/dataset.csv encounter summary",
+      "diastolic_bp": "OBSERVED: patient/dataset.csv encounter summary",
+      "respiratory_rate": "OBSERVED: patient/dataset.csv encounter summary",
+      "spo2": "OBSERVED: patient/dataset.csv encounter summary",
+      "temperature": "OBSERVED: patient/dataset.csv encounter summary",
+      "glucose": "OBSERVED: patient/dataset.csv encounter summary",
+      "potassium": "OBSERVED: patient/dataset.csv encounter summary",
+      "gcs": "OBSERVED: patient/dataset.csv encounter summary"
+    }
+  },
+  {
+    "patient_id": "53612",
+    "encounter_id": "1671",
+    "age": 82.0,
+    "gender": "F",
+    "ethnicity": "Caucasian",
+    "static_properties": {
+      "bmi": 22.03125,
+      "elective_surgery": 1,
+      "ventilated": 1.0,
+      "intubated": 0.0,
+      "icu_type": "Med-Surg ICU",
+      "apache_3j_bodysystem": "Gastrointestinal",
+      "demo_label": "PATIENT C \u2014 Acute simulated instability"
+    },
+    "baseline": {
+      "heart_rate": 79.0,
+      "systolic_bp": 91.0,
+      "diastolic_bp": 38.0,
+      "respiratory_rate": 14.0,
+      "spo2": 100.0,
+      "temperature": 36.35,
+      "glucose": 158.0,
+      "potassium": 4.9,
+      "gcs": 11.0
+    },
+    "provenance": {
+      "heart_rate": "OBSERVED: patient/dataset.csv encounter summary",
+      "systolic_bp": "OBSERVED: patient/dataset.csv encounter summary",
+      "diastolic_bp": "OBSERVED: patient/dataset.csv encounter summary",
+      "respiratory_rate": "OBSERVED: patient/dataset.csv encounter summary",
+      "spo2": "OBSERVED: patient/dataset.csv encounter summary",
+      "temperature": "OBSERVED: patient/dataset.csv encounter summary",
+      "glucose": "OBSERVED: patient/dataset.csv encounter summary",
+      "potassium": "OBSERVED: patient/dataset.csv encounter summary",
+      "gcs": "OBSERVED: patient/dataset.csv encounter summary"
+    }
+  }
+]

@@ -1,0 +1,2 @@
+"""CRITICALCARE-TWIN research prototype."""
+
