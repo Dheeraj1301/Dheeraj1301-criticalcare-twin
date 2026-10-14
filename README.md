@@ -63,9 +63,34 @@ The seven workspaces are Command Center, Live Twin, State Explorer, Risk & Expla
 
 Python 3.11+ is recommended.
 
+Clone the repository and enter the project directory:
+
+```powershell
+git clone https://github.com/Dheeraj1301/criticalcare-twin.git
+cd criticalcare-twin
+```
+
+### Windows PowerShell
+
 ```powershell
 python -m venv .venv
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 .venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+python scripts/download_data.py
+python scripts/inspect_data.py
+python scripts/prepare_data.py
+python scripts/train_models.py
+python -m pytest -q
+```
+
+### macOS or Linux
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 python scripts/download_data.py
 python scripts/inspect_data.py
@@ -77,14 +102,20 @@ python -m pytest -q
 Start the cloud boundary in terminal 1:
 
 ```powershell
+.venv\Scripts\Activate.ps1
 python scripts/run_cloud.py
 ```
 
 Start the edge dashboard in terminal 2:
 
 ```powershell
+.venv\Scripts\Activate.ps1
 python -m streamlit run app.py
 ```
+
+On macOS or Linux, replace the activation command with `source .venv/bin/activate`.
+
+Open the dashboard at `http://localhost:8501`. The cloud API runs at `http://127.0.0.1:8000`; verify it at `http://127.0.0.1:8000/health`.
 
 `python scripts/run_demo.py --launch` combines the lifecycle smoke test and dashboard launch. Dashboard startup does not retrain models.
 
@@ -127,12 +158,3 @@ tests/           lifecycle, feature, persistence, event, and isolation tests
 
 The source is not a live EHR; replay is not a physiological simulator; random-split metrics do not show temporal or external validity; subgroup fairness has not been established; and missing measurements may be informative. Future work requires governed longitudinal data, clinical-domain review, external validation, calibrated uncertainty, fairness analysis, and prospective human-factors testing before considering clinical evaluation.
 
-## Optional GitHub publication after local review
-
-```powershell
-git add .
-git commit -m "Build CRITICALCARE-TWIN research prototype"
-git branch -M main
-git remote add origin https://github.com/YOUR_USER/criticalcare-twin.git
-git push -u origin main
-```
