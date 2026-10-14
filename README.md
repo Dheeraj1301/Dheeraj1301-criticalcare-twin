@@ -66,8 +66,8 @@ Python 3.11+ is recommended.
 Clone the repository and enter the project directory:
 
 ```powershell
-git clone https://github.com/Dheeraj1301/criticalcare-twin.git
-cd criticalcare-twin
+git clone https://github.com/Dheeraj1301/Dheeraj1301-criticalcare-twin.git
+cd Dheeraj1301-criticalcare-twin
 ```
 
 ### Windows PowerShell
