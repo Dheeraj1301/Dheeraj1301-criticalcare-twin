@@ -12,7 +12,7 @@
       "intubated": 0.0,
       "icu_type": "CTICU",
       "apache_3j_bodysystem": "Sepsis",
-      "demo_label": "PATIENT A \u2014 Stable"
+      "display_label": "OBSERVED ENCOUNTER A"
     },
     "baseline": {
       "heart_rate": 113.5,
@@ -47,7 +47,7 @@
       "bmi": 26.38686696,
       "elective_surgery": 0,
       "icu_type": "Cardiac ICU",
-      "demo_label": "PATIENT B \u2014 Gradual deterioration"
+      "display_label": "OBSERVED ENCOUNTER B"
     },
     "baseline": {
       "heart_rate": 42.0,
@@ -85,7 +85,7 @@
       "intubated": 0.0,
       "icu_type": "Med-Surg ICU",
       "apache_3j_bodysystem": "Gastrointestinal",
-      "demo_label": "PATIENT C \u2014 Acute simulated instability"
+      "display_label": "OBSERVED ENCOUNTER C"
     },
     "baseline": {
       "heart_rate": 79.0,

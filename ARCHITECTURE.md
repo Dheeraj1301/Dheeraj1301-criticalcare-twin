@@ -1,27 +1,15 @@
-# Cloud-Edge Architecture
+# Architecture
 
-The architecture now separates the low-latency edge twin from the longitudinal cloud service. `PatientDigitalTwin` remains the aggregate root at the edge. `TwinSynchronizer` advances it through validation, confidence-weighted estimation, derived features, analytics, uncertainty, forecasting, events, and local persistence before `EdgeGateway` sends a reduced pseudonymous snapshot to the cloud boundary.
+CRITICALCARE-TWIN is an offline-capable edge application connected to FIWARE Orion-LD and MinIO.
 
-```mermaid
-flowchart LR
-  subgraph EDGE[Edge node]
-    K[Kaggle/demo source] --> D[Adapter] --> O[Observation]
-    O --> T[PatientDigitalTwin]
-    T --> SY[Synchronizer] --> SE[State estimator] --> FE[Feature engine]
-    FE --> AN[Risk + anomaly + forecast]
-    T --> SQ[(Local twin SQLite)]
-    T --> UI[Low-latency dashboard]
-    T --> GW[EdgeGateway]
-    GW --> Q[(Offline outbox)]
-  end
-  subgraph CLOUD[Cloud service]
-    API[FastAPI sync boundary] --> CS[(Versioned cloud twin store)]
-    CS --> L[Latest-state API]
-    CS --> F[Fleet-summary API]
-  end
-  Q -->|HTTPS-ready pseudonymous envelope| API
-```
+1. An observed ICU encounter or uploaded timestamped CSV creates an `Observation`.
+2. Validation enforces patient identity, chronological ordering, numeric types, quality bounds, and physiological ranges.
+3. `TwinSynchronizer` updates the versioned `PatientDigitalTwin`, derived features, analytics, uncertainty, events, and SQLite audit state.
+4. `EdgeGateway` replaces the source identifier with a salted SHA-256 key and builds a versioned envelope.
+5. `OrionDigitalTwinClient` creates or updates the corresponding NGSI-LD `CriticalCareTwin` entity.
+6. `SnapshotObjectStore` archives the same envelope at `twins/{patient_key}/{date}/v{version}.json` in MinIO.
+7. If either platform boundary is unavailable, the immutable envelope remains in SQLite and can be flushed later.
 
-State and events use Pydantic contracts. The edge persists JSON snapshots locally before network transmission. The outbox survives cloud outages and retries immutable messages in order. The source patient ID is transformed into a salted SHA-256 pseudonymous key before a cloud payload is built; raw identifiers and raw observations are not sent. Scenario clones have no edge gateway and therefore cannot pollute the cloud record.
+Orion-LD owns current connected context. MinIO owns immutable snapshot history. SQLite owns the local audit and outage boundary.
 
-The cloud service exposes `GET /health`, `POST /v1/twins/sync`, `GET /v1/twins/{patient_key}/latest`, and `GET /v1/fleet/summary`. In the free demonstration it runs as a separate local process, accurately exercising the cloud boundary without claiming a commercial cloud deployment. Production deployment requires TLS, authenticated edge identities, managed secrets, access control, encryption, monitoring, and governance.
+The deployment is self-hosted and uses no paid cloud API. Shared or clinical environments still require TLS, authenticated identities, secret rotation, authorization, monitoring, backups, governance, and clinical validation.

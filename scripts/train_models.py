@@ -8,7 +8,7 @@ import joblib
 import numpy as np
 import pandas as pd
 from sklearn.compose import make_column_transformer
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import ExtraTreesClassifier, HistGradientBoostingClassifier, RandomForestClassifier
 from sklearn.impute import SimpleImputer
 from sklearn.inspection import permutation_importance
 from sklearn.linear_model import LogisticRegression
@@ -41,6 +41,10 @@ def main() -> None:
     candidates = {
         "logistic_regression": make_pipeline(SimpleImputer(strategy="median"), StandardScaler(), LogisticRegression(max_iter=1500, class_weight="balanced", random_state=SEED)),
         "random_forest": make_pipeline(SimpleImputer(strategy="median"), RandomForestClassifier(n_estimators=180, max_depth=10, min_samples_leaf=8, class_weight="balanced", n_jobs=-1, random_state=SEED)),
+        "extra_trees": make_pipeline(SimpleImputer(strategy="median"), ExtraTreesClassifier(n_estimators=300, max_depth=14, min_samples_leaf=5, max_features=.8, class_weight="balanced", n_jobs=-1, random_state=SEED)),
+        "hist_gradient_boosting": make_pipeline(SimpleImputer(strategy="median"), HistGradientBoostingClassifier(max_iter=220, learning_rate=.06, max_leaf_nodes=24, l2_regularization=1.0, random_state=SEED)),
+        "extra_trees": make_pipeline(SimpleImputer(strategy="median"), ExtraTreesClassifier(n_estimators=300, max_depth=14, min_samples_leaf=5, class_weight="balanced", n_jobs=-1, random_state=SEED)),
+        "hist_gradient_boosting": make_pipeline(SimpleImputer(strategy="median"), HistGradientBoostingClassifier(max_iter=250, learning_rate=.06, max_leaf_nodes=24, l2_regularization=1.0, class_weight="balanced", random_state=SEED)),
     }
     results = {}
     for name, model in candidates.items():

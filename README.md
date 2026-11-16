@@ -1,97 +1,64 @@
 # CRITICALCARE-TWIN
 
-**Patient-Specific Digital Twin for Critical-Care Monitoring, Deterioration Forecasting, and What-If Simulation**
+Patient-specific digital-twin research software backed by a real, open-source digital-twin platform and S3-compatible object storage.
 
-> **Research and educational prototype. Not for clinical diagnosis, treatment, or patient management.** This software is not a medical device, has no clinical validation, and must not be used to prescribe treatment or manage a patient.
+> Research software only. The model has no clinical validation and must not be used for diagnosis, treatment, triage, or patient management.
 
-CRITICALCARE-TWIN is a cloud-edge research prototype that makes the digital-twin lifecycle inspectable. The edge node owns low-latency patient synchronization and remains operational offline. A deployable cloud API receives pseudonymous versioned summaries for longitudinal storage and fleet-level queries. The free demo runs both boundaries locally and does not pretend that a commercial cloud account is configured.
-
-## Why a patient digital twin?
-
-A patient digital twin is a computational representation that stays synchronized with observations of a physical patient. Here, an observed ICU encounter initializes the patient-specific baseline. Because the downloaded dataset is cross-sectional rather than bedside telemetry, a seeded generator produces clearly labelled **SIMULATED DEMO TELEMETRY**. The twin turns each observation into an auditable state transition.
+## Working architecture
 
 ```mermaid
 flowchart LR
-  P[Patient / source] --> O[Timestamped observation]
-  O --> V[Validation] --> S[State synchronization]
-  S --> E[Confidence-weighted estimator] --> X[Patient state X_t]
-  X --> F[Derived and temporal features Z_t] --> A[Attached analytics]
-  A --> R[Hospital-death model]
-  A --> N[Anomaly detector]
-  A --> T[Prototype forecast]
-  X --> C[Cloned scenario twin] --> W[What-if comparison]
-  X --> DB[(Edge SQLite snapshots + events)]
-  DB --> Q[(Offline cloud outbox)]
-  Q --> API[Cloud sync API]
-  API --> CDB[(Cloud twin store)]
+  A[Observed ICU row / uploaded device or EHR CSV] --> B[Edge validation]
+  B --> C[PatientDigitalTwin state synchronization]
+  C --> D[Measured model inference + anomaly + forecast]
+  C --> E[(Local SQLite audit)]
+  C --> F[(Offline outbox)]
+  F --> G[FIWARE Orion-LD]
+  G --> H[(MongoDB current NGSI-LD context)]
+  F --> I[(MinIO immutable JSON snapshots)]
+  G --> J[Streamlit dashboard]
+  C --> J
 ```
 
-## What makes this a twin
+The production path does not generate synthetic telemetry. Initial state comes from observed encounter summaries in the audited ICU dataset. Further state transitions require timestamped observations uploaded through the dashboard or sent by a device/EHR adapter. The source dataset is cross-sectional, so the application does not claim that its encounter summaries are a live bedside stream.
 
-- `PatientDigitalTwin` owns identity, static properties, patient baseline, current and previous state, observation buffer, history, derived state, risk, uncertainty, alerts, forecasts, scenario results, provenance, synchronization time, and version.
-- `TwinSynchronizer` executes validation → estimation → features → risk → anomaly → forecast → event → snapshot → persistence.
-- Each parameter retains raw observation, filtered estimate, delta, rolling mean/SD, slope, trend, confidence, timestamp, and provenance class.
-- Edge SQLite snapshots make state durable beyond one function call; a second durable outbox provides offline-safe cloud synchronization.
-- Cloud envelopes use pseudonymous patient keys, idempotent message IDs, and explicit twin versions.
-- Simulation clones the current twin; the critical isolation test proves a scenario cannot mutate the actual twin.
+### Free platform components
 
-## Data and scientific boundary
+| Layer | Technology | Purpose |
+|---|---|---|
+| Digital-twin framework | FIWARE Orion-LD 1.12.0 | Stores and updates each patient twin as an NGSI-LD entity |
+| Framework database | MongoDB 4.4 | Persists the current Orion-LD context |
+| Object storage | MinIO | Stores immutable, versioned JSON snapshots through the S3 API |
+| Edge persistence | SQLite | Stores observations, snapshots, events, predictions, and the offline outbox |
+| Dashboard | Streamlit | Observed-data ingestion, state, evidence, and platform status |
+| Analytics | scikit-learn | Held-out hospital-death model and transparent analytics |
 
-All requested datasets are downloaded and audited in [reports/DATASET_AUDIT.md](reports/DATASET_AUDIT.md).
+FIWARE Orion-LD and MinIO are self-hosted open-source software. No AWS account or paid cloud service is required.
 
-| Dataset | Rows | Role |
-|---|---:|---|
-| `mitishaagarwal/patient` | 91,713 | ICU encounter profiles and documented `hospital_death` target |
-| `uom190346a/disease-symptoms-and-patient-profile-dataset` | 349 | Separate symptom/profile source; audit only |
-| `abbas829/healthcare-patient-analytics-dataset` | 5,000 | Separate administrative source; provenance demonstration |
-
-The datasets are **not joined**. Only the ICU table has an identifier usable within its own source. Similar demographics are not a scientifically defensible linkage key. Its vital signs are first-hour/day extrema, not a timestamped sequence; temporal replay is therefore simulated, fixed-seed, and never used to fabricate model labels.
-
-## State and analytics
-
-The dynamic state contains heart rate, systolic and diastolic blood pressure, respiratory rate, SpO₂, temperature, glucose, potassium, and a GCS proxy. The engine also computes MAP, pulse pressure, an HR/SBP proxy, rolling slopes and volatility, patient-baseline deviations, normalized deviations, missingness, and a **prototype instability metric**. None is presented as a validated bedside score.
-
-The supervised model estimates the dataset's actual `hospital_death` outcome. Logistic regression and random forest are compared on a fixed stratified split; APACHE mortality probabilities, identifiers, and outcome-adjacent fields are excluded. An independent transparent anomaly detector combines patient-normalized deviations. Forecasts use local trends with widening uncertainty bands. Feature contributions are associations, not causal explanations.
-
-The what-if laboratory clones the synchronized twin, applies controlled physiological perturbations, and compares baseline-clone and scenario-clone trajectories. It gives no dosage, intervention, or treatment advice.
-
-## Dashboard
-
-The seven workspaces are Command Center, Live Twin, State Explorer, Risk & Explainability, What-If Lab, Cloud & Edge, and Evidence Lab. Redundant architecture/data/model pages were consolidated. Every clinical field is classified as `OBSERVED`, `DERIVED`, `MODEL_ESTIMATED`, or `SIMULATED`.
-
-## Installation and reproducible run
-
-Python 3.11+ is recommended.
-
-Clone the repository and enter the project directory:
+## Clone and install
 
 ```powershell
 git clone https://github.com/Dheeraj1301/Dheeraj1301-criticalcare-twin.git
 cd Dheeraj1301-criticalcare-twin
-```
-
-### Windows PowerShell
-
-```powershell
 python -m venv .venv
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 .venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
-python scripts/download_data.py
-python scripts/inspect_data.py
-python scripts/prepare_data.py
-python scripts/train_models.py
-python -m pytest -q
 ```
 
-### macOS or Linux
+macOS/Linux activation:
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
+```
+
+## Prepare observed data and model
+
+```powershell
 python scripts/download_data.py
 python scripts/inspect_data.py
 python scripts/prepare_data.py
@@ -99,62 +66,107 @@ python scripts/train_models.py
 python -m pytest -q
 ```
 
-Start the cloud boundary in terminal 1:
+The downloaded raw datasets are intentionally excluded from Git. The processed audited table and trained model are versioned for reproducibility.
+
+## Start the free digital-twin platform
+
+A running Docker-compatible daemon is required. On Windows, where the Compose plugin may be absent, use:
 
 ```powershell
-.venv\Scripts\Activate.ps1
-python scripts/run_cloud.py
+powershell -ExecutionPolicy Bypass -File infra\start-free-stack.ps1
 ```
 
-Start the edge dashboard in terminal 2:
+If Docker Compose is available:
 
 ```powershell
-.venv\Scripts\Activate.ps1
+docker compose -f infra\compose.yaml up -d
+```
+
+Endpoints:
+
+| Service | URL |
+|---|---|
+| Orion-LD version/health | http://127.0.0.1:1026/version |
+| MinIO S3 API | http://127.0.0.1:9000 |
+| MinIO console | http://127.0.0.1:9001 |
+
+Local development credentials are `criticalcare` / `criticalcare-local`. Change them before any shared deployment.
+
+Verify the real framework and storage path:
+
+```powershell
+python scripts/verify_platform.py
+```
+
+Stop containers while retaining data volumes:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File infra\stop-free-stack.ps1
+```
+
+## Run the dashboard
+
+```powershell
 python -m streamlit run app.py
 ```
 
-On macOS or Linux, replace the activation command with `source .venv/bin/activate`.
+Open http://localhost:8501. The six workspaces are Command Center, Observation Ingestion, State Explorer, Risk & Explainability, Digital Twin Platform, and Evidence Lab.
 
-Open the dashboard at `http://localhost:8501`. The cloud API runs at `http://127.0.0.1:8000`; verify it at `http://127.0.0.1:8000/health`.
+### Observed CSV contract
 
-`python scripts/run_demo.py --launch` combines the lifecycle smoke test and dashboard launch. Dashboard startup does not retrain models.
-
-For copy-paste VS Code commands and a plain-language explanation of every feature, see [RUN_AND_FEATURE_GUIDE.md](RUN_AND_FEATURE_GUIDE.md).
-
-## Demo workflow
-
-Select Patient B, open **Live Twin**, choose **Respiratory deterioration**, and play the stream. Watch source badges change to `SIMULATED`, state version increment, and events appear. In **State Explorer**, show observation → filtered state → trend. In **What-If Lab**, reduce SpO₂ by five points and demonstrate “actual twin isolation: VERIFIED.” See [DEMO_GUIDE.md](DEMO_GUIDE.md).
-
-## Repository map
+Upload timestamped measurements on the Observation Ingestion page. The accepted columns are:
 
 ```text
-config/          clinical feature, scenario, and runtime settings
-data/            immutable raw, processed, synthetic, and metadata areas
-models/          fitted model bundle and metadata
-reports/         dataset audit, provenance, and model evaluation
-scripts/         download, audit, preparation, training, and demo entry points
-src/data/        adapters, preprocessing, validation
-src/twin/        state, synchronizer, estimator, features, events, repository
-src/analytics/   risk model, anomaly, forecast, explainability
-src/simulation/  synthetic telemetry and cloned scenario engine
-src/edge/        pseudonymization, cloud client, offline outbox
-src/cloud/       deployable FastAPI synchronization and query service
-src/ui/          components, charts, styling
-tests/           lifecycle, feature, persistence, event, and isolation tests
+timestamp,heart_rate,systolic_bp,diastolic_bp,respiratory_rate,spo2,temperature,glucose,potassium,gcs
 ```
 
-## Documentation
+Rows are range-validated, synchronized in timestamp order, persisted locally, transformed into a pseudonymous NGSI-LD entity, and archived to MinIO. A disconnected broker or object store does not block the local twin; the exact payload remains in the durable outbox until it is flushed.
 
-- [DIGITAL_TWIN_SPEC.md](DIGITAL_TWIN_SPEC.md) — formal entities and equations
-- [PIPELINE.md](PIPELINE.md) — operational stage contracts
-- [ARCHITECTURE.md](ARCHITECTURE.md) — component responsibilities
-- [MODEL_CARD.md](MODEL_CARD.md) — intended use and limitations
-- [DATA_DICTIONARY.md](DATA_DICTIONARY.md) — field semantics and provenance classes
-- [LIMITATIONS.md](LIMITATIONS.md) — scientific and engineering limits
-- [PROJECT_STATUS.md](PROJECT_STATUS.md) — verified readiness state
-- `output/pdf/CRITICALCARE_TWIN_Cloud_Edge_Architecture.pdf` — illustrated architecture and dataset evidence report
+## Measured prediction results
 
-## Ethical limitations and future work
+The training script compares four models on the same 80/20 stratified held-out split (seed 42). It selects by ROC-AUC; metrics are never manually raised.
 
-The source is not a live EHR; replay is not a physiological simulator; random-split metrics do not show temporal or external validity; subgroup fairness has not been established; and missing measurements may be informative. Future work requires governed longitudinal data, clinical-domain review, external validation, calibrated uncertainty, fairness analysis, and prospective human-factors testing before considering clinical evaluation.
+| Model | ROC-AUC | PR-AUC | Precision @ 0.25 | Recall @ 0.25 | F1 @ 0.25 | Brier |
+|---|---:|---:|---:|---:|---:|---:|
+| Logistic regression | 0.840 | 0.399 | 0.142 | 0.938 | 0.246 | 0.163 |
+| Random forest | 0.849 | 0.420 | 0.154 | 0.928 | 0.265 | 0.132 |
+| Extra Trees | 0.846 | 0.421 | 0.136 | 0.960 | 0.238 | 0.150 |
+| **Histogram gradient boosting (selected)** | **0.858** | **0.447** | **0.161** | **0.924** | **0.274** | **0.147** |
 
+The selected model improves held-out ROC-AUC from 84.9% to 85.8% and PR-AUC from 42.0% to 44.7% versus the previous random forest. These are internal dataset results, not clinical accuracy or external validation.
+
+## Verification status
+
+| Check | Result |
+|---|---|
+| Python unit, persistence, gateway, privacy, and dashboard tests | 10 passed |
+| Selected model held-out ROC-AUC | 0.8577 |
+| Selected model held-out PR-AUC | 0.4467 |
+| Real Orion-LD + MinIO end-to-end run on this workstation | Requires a running container daemon |
+
+See [reports/TEST_RESULTS.md](reports/TEST_RESULTS.md) for the exact verification boundary.
+
+## Repository structure
+
+```text
+app.py                 Streamlit application
+config/                feature and runtime configuration
+data/processed/        audited model table
+data/metadata/         provenance and observed encounter profiles
+infra/                 Orion-LD, MongoDB, and MinIO launch definitions
+models/                selected fitted model and metrics
+reports/               dataset, model, and test evidence
+scripts/               preparation, training, and verification commands
+src/cloud/             Orion-LD and S3-compatible storage adapters
+src/data/              observed-data adapters, preprocessing, validation
+src/edge/              pseudonymization, outbox, platform synchronization
+src/twin/              state, synchronization, features, events, persistence
+tests/                 automated verification
+```
+
+## Important limits
+
+- The bundled ICU source contains encounter-level summaries, not longitudinal bedside telemetry.
+- A complete live deployment still requires an authorized device/EHR feed, identity/access controls, TLS, secrets management, data governance, and clinical validation.
+- Patient identifiers are pseudonymized before platform synchronization; pseudonymization is not anonymization.
+- Model importance and displayed contributions are associations, not causal explanations.

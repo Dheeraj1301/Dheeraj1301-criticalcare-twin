@@ -1,0 +1,24 @@
+services:
+  mongo:
+    image: mongo:4.4
+    command: --wiredTigerCacheSizeGB 0.5
+    volumes: [orion-mongo:/data/db]
+    restart: unless-stopped
+  orion:
+    image: quay.io/fiware/orion-ld:1.12.0
+    command: -dbhost mongo
+    depends_on: [mongo]
+    ports: ["1026:1026"]
+    restart: unless-stopped
+  minio:
+    image: quay.io/minio/minio:latest
+    command: server /data --console-address :9001
+    environment:
+      MINIO_ROOT_USER: criticalcare
+      MINIO_ROOT_PASSWORD: criticalcare-local
+    volumes: [minio-data:/data]
+    ports: ["9000:9000", "9001:9001"]
+    restart: unless-stopped
+volumes:
+  orion-mongo:
+  minio-data:

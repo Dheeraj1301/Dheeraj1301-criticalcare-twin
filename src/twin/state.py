@@ -16,7 +16,6 @@ class DataClass(StrEnum):
     OBSERVED = "OBSERVED"
     DERIVED = "DERIVED"
     MODEL_ESTIMATED = "MODEL_ESTIMATED"
-    SIMULATED = "SIMULATED"
 
 
 class PatientProfile(BaseModel):
@@ -37,7 +36,6 @@ class Observation(BaseModel):
     values: dict[str, float | None]
     quality: dict[str, float] = Field(default_factory=dict)
     source: DataClass = DataClass.OBSERVED
-    scenario: str | None = None
 
 
 class ParameterState(BaseModel):
@@ -77,7 +75,6 @@ class UncertaintyState(BaseModel):
     prediction_confidence: float = 0.0
     forecast_uncertainty: float = 0.0
     missing_fraction: float = 0.0
-    simulated_fraction: float = 0.0
 
 
 class TwinEvent(BaseModel):
@@ -101,22 +98,4 @@ class TwinSnapshot(BaseModel):
     derived_state: dict[str, float]
     risk_state: RiskState
     uncertainty: UncertaintyState
-
-
-class SimulationScenario(BaseModel):
-    name: str
-    perturbations: dict[str, float]
-    horizon: int = Field(default=6, ge=1, le=48)
-
-
-class SimulationResult(BaseModel):
-    scenario: SimulationScenario
-    baseline_trajectory: list[dict[str, float]]
-    scenario_trajectory: list[dict[str, float]]
-    baseline_risk: float
-    scenario_risk: float
-    baseline_anomaly: float
-    scenario_anomaly: float
-    original_state_hash: str
-    original_unchanged: bool
 

@@ -38,12 +38,12 @@ class ICUEncounterAdapter:
             baseline=baseline, provenance={k: "OBSERVED: patient/dataset.csv encounter summary" for k in baseline},
         )
 
-    def demo_profiles(self) -> list[PatientProfile]:
+    def observed_profiles(self) -> list[PatientProfile]:
         df = self.load()
         complete = df.dropna(subset=["h1_heartrate_min", "h1_sysbp_min", "h1_diasbp_min", "h1_resprate_min", "h1_spo2_min", "d1_temp_min"])
         candidates = [complete[complete.hospital_death == 0].iloc[0], complete[complete.hospital_death == 0].iloc[len(complete)//3], complete.iloc[-1]]
         profiles = [self.profile_from_row(r) for r in candidates]
-        for profile, label in zip(profiles, ["PATIENT A — Stable", "PATIENT B — Gradual deterioration", "PATIENT C — Acute simulated instability"]):
-            profile.static_properties["demo_label"] = label
+        for profile, label in zip(profiles, ["OBSERVED ENCOUNTER A", "OBSERVED ENCOUNTER B", "OBSERVED ENCOUNTER C"]):
+            profile.static_properties["display_label"] = label
         return profiles
 

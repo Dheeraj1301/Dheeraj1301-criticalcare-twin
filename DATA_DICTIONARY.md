@@ -5,7 +5,7 @@
 | heart_rate | Heart rate | bpm | ICU / telemetry | Observed or Simulated | Yes | Yes | Filtered and trended |
 | systolic_bp | Systolic pressure | mmHg | ICU / telemetry | Observed or Simulated | Yes | Yes | Baseline normalized |
 | diastolic_bp | Diastolic pressure | mmHg | ICU / telemetry | Observed or Simulated | Yes | Yes | Baseline normalized |
-| respiratory_rate | Respiratory rate | breaths/min | ICU / telemetry | Observed or Simulated | Yes | Yes | Bounded demo stream |
+| respiratory_rate | Respiratory rate | breaths/min | ICU / uploaded observation | Observed | Yes | Yes | Range-validated input |
 | spo2 | Peripheral oxygen saturation | % | ICU / telemetry | Observed or Simulated | Yes | Yes | Not a waveform |
 | temperature | Temperature | °C | ICU / telemetry | Observed or Simulated | Yes | Yes | Day-one midpoint initially |
 | glucose | Blood glucose | mg/dL | ICU / telemetry | Observed or Simulated | Yes | Yes | Day-one midpoint initially |

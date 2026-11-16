@@ -3,7 +3,6 @@ from __future__ import annotations
 import json
 import sqlite3
 from pathlib import Path
-from uuid import uuid4
 from .state import Observation, TwinEvent, TwinSnapshot
 
 
@@ -27,7 +26,6 @@ class TwinRepository:
             CREATE TABLE IF NOT EXISTS twin_snapshots (snapshot_id TEXT PRIMARY KEY, twin_id TEXT, patient_id TEXT, timestamp TEXT, version INTEGER, payload_json TEXT);
             CREATE TABLE IF NOT EXISTS twin_events (event_id TEXT PRIMARY KEY, twin_id TEXT, patient_id TEXT, timestamp TEXT, event_type TEXT, severity TEXT, payload_json TEXT);
             CREATE TABLE IF NOT EXISTS risk_predictions (id INTEGER PRIMARY KEY AUTOINCREMENT, twin_id TEXT, timestamp TEXT, target TEXT, probability REAL, confidence REAL);
-            CREATE TABLE IF NOT EXISTS simulation_runs (id TEXT PRIMARY KEY, twin_id TEXT, timestamp TEXT, payload_json TEXT);
             CREATE TABLE IF NOT EXISTS model_metadata (name TEXT PRIMARY KEY, payload_json TEXT);
             """)
 
@@ -49,12 +47,6 @@ class TwinRepository:
         with self.connect() as db:
             db.execute("INSERT OR IGNORE INTO twin_events VALUES (?, ?, ?, ?, ?, ?, ?)", (event.event_id, event.twin_id, event.patient_id, event.timestamp.isoformat(), event.event_type, event.severity, json.dumps(event.payload, default=str)))
 
-    def save_simulation(self, twin_id: str, result) -> str:
-        run_id = str(uuid4())
-        with self.connect() as db:
-            db.execute("INSERT INTO simulation_runs VALUES (?, ?, datetime('now'), ?)", (run_id, twin_id, result.model_dump_json()))
-        return run_id
-
     def save_model_metadata(self, name: str, metadata: dict) -> None:
         with self.connect() as db:
             db.execute("INSERT OR REPLACE INTO model_metadata VALUES (?, ?)", (name, json.dumps(metadata, default=str)))
@@ -65,6 +57,6 @@ class TwinRepository:
         return [TwinSnapshot.model_validate_json(r[0]) for r in rows]
 
     def counts(self) -> dict[str, int]:
-        names = ["patients", "twins", "observations", "twin_snapshots", "twin_events", "risk_predictions", "simulation_runs", "model_metadata"]
+        names = ["patients", "twins", "observations", "twin_snapshots", "twin_events", "risk_predictions", "model_metadata"]
         with self.connect() as db:
             return {name: db.execute(f"SELECT COUNT(*) FROM {name}").fetchone()[0] for name in names}

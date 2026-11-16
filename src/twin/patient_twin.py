@@ -24,7 +24,6 @@ class PatientDigitalTwin:
         self.alerts: list[str] = []
         self.model_outputs: dict = {}
         self.forecast_outputs: list[dict] = []
-        self.simulation_outputs: list[dict] = []
         self.provenance = profile.provenance
         self.last_synchronization_time: datetime | None = None
         self.twin_version = 0
@@ -56,14 +55,6 @@ class PatientDigitalTwin:
 
     def snapshot(self) -> TwinSnapshot:
         return TwinSnapshot(twin_id=self.twin_id, patient_id=self.profile.patient_id, twin_version=self.twin_version, state=self.current_state.model_copy(deep=True), derived_state=copy.deepcopy(self.derived_state), risk_state=self.risk_state.model_copy(deep=True), uncertainty=self.uncertainty.model_copy(deep=True))
-
-    def clone(self) -> "PatientDigitalTwin":
-        cloned = copy.deepcopy(self)
-        cloned.twin_id = f"SIM-{uuid4().hex[:8].upper()}"
-        cloned.identity["twin_id"] = cloned.twin_id
-        cloned.repository = None
-        cloned.edge_gateway = None
-        return cloned
 
     @property
     def status(self) -> str:

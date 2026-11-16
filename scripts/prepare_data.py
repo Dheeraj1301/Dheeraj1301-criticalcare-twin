@@ -1,4 +1,4 @@
-"""Create the audited ICU modeling table and demo profile metadata."""
+"""Create the audited ICU modeling table and observed encounter metadata."""
 from __future__ import annotations
 
 import json
@@ -42,9 +42,9 @@ def main() -> None:
     OUT.parent.mkdir(parents=True, exist_ok=True)
     model.to_csv(OUT, index=False)
     adapter = ICUEncounterAdapter(SOURCE)
-    profiles = [p.model_dump(mode="json") for p in adapter.demo_profiles()]
+    profiles = [p.model_dump(mode="json") for p in adapter.observed_profiles()]
     META.mkdir(parents=True, exist_ok=True)
-    (META / "demo_profiles.json").write_text(json.dumps(profiles, indent=2), encoding="utf-8")
+    (META / "observed_profiles.json").write_text(json.dumps(profiles, indent=2), encoding="utf-8")
     provenance = {
         "source_dataset": "mitishaagarwal/patient", "source_file": "data/raw/patient/dataset.csv",
         "processing_timestamp": datetime.now(timezone.utc).isoformat(),
