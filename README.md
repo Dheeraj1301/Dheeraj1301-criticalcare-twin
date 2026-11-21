@@ -20,6 +20,8 @@ flowchart LR
   C --> J
 ```
 
+For **detailed component and recovery diagrams**, see [ARCHITECTURE.md](ARCHITECTURE.md).
+
 The production path does not generate synthetic telemetry. Initial state comes from observed encounter summaries in the audited ICU dataset. Further state transitions require timestamped observations uploaded through the dashboard or sent by a device/EHR adapter. The source dataset is cross-sectional, so the application does not claim that its encounter summaries are a live bedside stream.
 
 ### Free platform components
